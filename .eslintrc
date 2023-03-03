@@ -12,6 +12,24 @@
       "no-console": "off",
       "indent": ["error", 2],
       "quotes": ["error", "single"],
-      "semi": ["error", "always"]
+      "semi": ["error", "always"],
+      "no-unused-expressions": 0,
+      "no-return-await": 0,
+      "no-await-in-loop": 0,
+        "no-multi-assign": 0,
+        "prefer-destructuring": 0,
+        "import/no-extraneous-dependencies": 0,
+        "import/no-dynamic-require": 0,
+        "no-template-curly-in-string": 0,
+        "no-useless-catch": 0,
+        "prefer-promise-reject-errors": 0,
+        "max-len": ["error", 110, 2, {
+            "ignoreUrls": true,
+            "ignoreComments": true,
+            "ignoreRegExpLiterals": true,
+            "ignoreStrings": true,
+            "ignoreTemplateLiterals": true
+          }],
+          "comma-dangle": 0
     }
   }

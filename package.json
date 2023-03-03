@@ -16,6 +16,7 @@
     "eslint": "^8.35.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
+    "husky": "^8.0.3",
     "mongodb": "^5.1.0",
     "openai": "^3.2.1"
   },
