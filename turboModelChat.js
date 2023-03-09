@@ -1,5 +1,5 @@
 const { Configuration, OpenAIApi } = require('openai');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const mongoURL = process.env.MONGO_URL ?? 'mongodb://127.0.0.1:27039/ai';
 const readline = require('readline');
@@ -21,20 +21,30 @@ const ask = async (question) => {
 (async () => {
   const mongodbClient = await MongoClient.connect(mongoURL);
   const db = mongodbClient.db('ai');
-  const prompt = await ask('Using Turbo Model.\r\nPlease enter your questions to ChatGPT:\r\n');
+  let prompt = await ask('Using Turbo Model.\r\nPlease enter your questions to ChatGPT:\r\n');
   const openai = new OpenAIApi(configuration);
   const chatModel = new ChatModel(openai);
+  let isStillRequesting = true;
   try {
-    const result = await chatModel.createCompletion(prompt);
-    console.log(result);
-    await db.collection('chatlog').insertOne(
-      {
-        question: prompt,
-        answer: result,
-        model: chatModel.getModelName(),
-        create_at: new Date(),
-      },
-    );
+    const conversationId = new ObjectId();
+    while (isStillRequesting) {
+      const responseContent = await chatModel.createCompletion(prompt);
+      await db.collection('chatlog').insertOne(
+        {
+          conversation_id: conversationId,
+          question: prompt,
+          answer: responseContent,
+          model: chatModel.getModelName(),
+          create_at: new Date(),
+        },
+      );
+      prompt = await ask('Continue to ask, enter what you want in the same conversation:\r\n');
+      if (prompt === 'stop') {
+        console.log('System: Bye, have a good day.\r\n');
+        isStillRequesting = false;
+      }
+    }
+
     process.exit(0);
   } catch (error) {
     if (error.response) {
