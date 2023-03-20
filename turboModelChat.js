@@ -9,7 +9,6 @@ const ChatModel = require('./chatModel');
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-// docker run -it --rm --name ai-db -p 27039:27017 -d mongo:5.0.10
 
 const ask = async (question) => {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -24,7 +23,7 @@ const ask = async (question) => {
   let prompt = await ask('Using Turbo Model.\r\nPlease enter your questions to ChatGPT:\r\n');
   const openai = new OpenAIApi(configuration);
   const chatModel = new ChatModel(openai);
-  let isStillRequesting = true;
+  const isStillRequesting = true;
   try {
     const conversationId = new ObjectId();
     while (isStillRequesting) {
@@ -41,11 +40,9 @@ const ask = async (question) => {
       prompt = await ask('Continue to ask, enter what you want in the same conversation:\r\n');
       if (prompt === 'stop') {
         console.log('System: Bye, have a good day.\r\n');
-        isStillRequesting = false;
+        process.exit(0);
       }
     }
-
-    process.exit(0);
   } catch (error) {
     if (error.response) {
       console.log(error.response.status);
