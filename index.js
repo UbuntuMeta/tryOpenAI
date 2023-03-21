@@ -30,7 +30,11 @@ const introduceGPT = () => {
   console.log('Welcome to use ChatGPT, a chatbot powered by OpenAI GPT-3.\r\n');
   console.log('If you want to stop, just type "stop" in the prompt.\r\n');
 };
-
+/**
+ * initialize the model name by input from user, the default model name is gpt-3.5-turbo
+ *
+ * @returns {string} modelName
+ */
 const initModel = async () => {
   const modelName = await ask('Please enter the model name that you want to use:(Default is gpt-3.5-turbo)\r\n');
   stopByPrompt(modelName);
