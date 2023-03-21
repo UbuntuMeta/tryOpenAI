@@ -6,7 +6,6 @@ const mongoURL = process.env.MONGO_URL ?? 'mongodb://127.0.0.1:27039/ai';
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-// docker run -it --rm --name ai-db -p 27039:27017 -d mongo:5.0.10
 const readline = require('readline');
 
 const ask = async (questionMessage) => {
