@@ -1,5 +1,5 @@
 const { Configuration, OpenAIApi } = require('openai');
-const Turbo35Model = require('./models/turbo35Model');
+const Turbo35Model = require('./libs/models/turbo35Model');
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,

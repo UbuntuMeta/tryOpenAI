@@ -1,12 +1,13 @@
 const { Configuration, OpenAIApi } = require('openai');
 const { MongoClient } = require('mongodb');
+const readline = require('readline');
+const ModelFactory = require('./modelFactory');
 
 const mongoURL = process.env.MONGO_URL ?? 'mongodb://127.0.0.1:27039/ai';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const readline = require('readline');
 
 const ask = async (questionMessage) => {
   const readFromLine = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -50,12 +51,16 @@ const initModel = async () => {
   const prompt = await ask('Please enter your questions to ChatGPT:\r\n');
   stopByPrompt(prompt);
   const openai = new OpenAIApi(configuration);
+  let response;
   try {
     // Create different openai model by factory pattern
-    // const modelName = 'text-davinci-003';
-    // "gpt-3.5-turbo";
-    if (modelName === 'text-davinci-003') {
-      const response = await openai.createCompletion({
+    if (modelName === 'gpt-3.5-turbo') {
+      const modelFactory = new ModelFactory();
+      const model = modelFactory.getInstance(modelName);
+      response = model.ask(prompt);
+      console.log(response);
+    } else if (modelName === 'text-davinci-003') {
+      response = await openai.createCompletion({
         model: modelName,
         prompt,
         temperature: 0.7,
@@ -66,16 +71,15 @@ const initModel = async () => {
       });
       console.log('######Response is:######\r\n');
       console.log(response.data.choices[0].text);
-      await db.collection('chatlog').insertOne(
-        {
-          question: prompt,
-          answer: response.data.choices[0].text,
-          model: modelName,
-          create_at: new Date(),
-        },
-      );
     }
-    // TODO use turbo-3.5 model to run and use factory pattern to create different models
+    await db.collection('chatlog').insertOne(
+      {
+        question: prompt,
+        answer: response.data.choices[0].text,
+        model: modelName,
+        create_at: new Date(),
+      },
+    );
     process.exit(0);
   } catch (error) {
     if (error.response) {
